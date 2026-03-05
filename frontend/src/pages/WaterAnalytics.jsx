@@ -11,7 +11,7 @@ import {
   PieChart,
   Users,
 } from "lucide-react";
-import { getAnalyticsSummary, getAnalyticsTrends } from "../services/api";
+import { getAnalyticsSummary, getAnalyticsTrends, getWaterDataMonthly } from "../services/api";
 import { ComplaintTrendChart, RiskDoughnut, WaterUsageChart } from "../components/Charts";
 import IssueTypePieChart from "../components/IssueTypePieChart";
 
@@ -42,16 +42,18 @@ function MetricCard({ icon: Icon, label, value, sub, color }) {
 export default function WaterAnalytics() {
   const [summary, setSummary] = useState(null);
   const [trends, setTrends] = useState(null);
+  const [waterData, setWaterData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchData = () => {
     setLoading(true);
     setError(null);
-    Promise.all([getAnalyticsSummary(), getAnalyticsTrends()])
-      .then(([sumRes, trendRes]) => {
+    Promise.all([getAnalyticsSummary(), getAnalyticsTrends(), getWaterDataMonthly()])
+      .then(([sumRes, trendRes, waterRes]) => {
         setSummary(sumRes.data);
         setTrends(trendRes.data);
+        setWaterData(waterRes.data);
       })
       .catch(() => setError("Could not load analytics data."))
       .finally(() => setLoading(false));
@@ -194,7 +196,7 @@ export default function WaterAnalytics() {
           <Droplet size={18} className="text-brand-600" />
           <h3 className="text-base font-semibold text-gray-800">Water Usage vs Rainfall</h3>
         </div>
-        <WaterUsageChart summary={summary} />
+        <WaterUsageChart summary={summary} waterData={waterData} />
       </div>
 
       {/* Risk distribution */}

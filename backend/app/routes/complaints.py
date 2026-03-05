@@ -8,7 +8,7 @@ from app.database import get_db
 from app.models import Complaint
 from app.schemas import ComplaintCreate, ComplaintOut, ComplaintStatusUpdate
 
-logger = logging.getLogger("aquavision.complaints")
+logger = logging.getLogger("waterwatchai.complaints")
 router = APIRouter(prefix="/complaints", tags=["Complaints"])
 
 
@@ -28,9 +28,18 @@ def create_complaint(payload: ComplaintCreate, db: Session = Depends(get_db)):
 
 
 @router.get("", response_model=List[ComplaintOut])
-def get_complaints(db: Session = Depends(get_db)):
+def get_complaints(q: str = None, limit: int = None, db: Session = Depends(get_db)):
     try:
-        return db.query(Complaint).order_by(Complaint.created_at.desc()).all()
+        query = db.query(Complaint)
+        if q:
+            pattern = f"%{q}%"
+            query = query.filter(
+                Complaint.title.ilike(pattern) | Complaint.description.ilike(pattern)
+            )
+        query = query.order_by(Complaint.created_at.desc())
+        if limit and limit > 0:
+            query = query.limit(limit)
+        return query.all()
     except Exception as e:
         logger.error(f"Failed to fetch complaints: {e}")
         raise HTTPException(status_code=500, detail="Failed to retrieve complaints.")

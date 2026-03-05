@@ -120,14 +120,19 @@ export function RiskDoughnut({ summary }) {
 
 /* ---------- Water Usage Insights (area / line chart) ---------- */
 
-export function WaterUsageChart({ summary }) {
-  // Provide a sample visualization even if summary is minimal
-  const avgUsage = summary?.avg_water_usage || 0;
-  const avgRainfall = summary?.avg_rainfall || 0;
+export function WaterUsageChart({ summary, waterData }) {
+  // Use real per-month data if available, otherwise fall back to summary averages
+  let usageData, rainfallData;
 
-  // Simulated monthly data proportional to averages (for demo purposes)
-  const usageData = MONTHS.map((_, i) => Math.round(avgUsage * (0.7 + Math.sin(i) * 0.3)));
-  const rainfallData = MONTHS.map((_, i) => Math.round(avgRainfall * (0.5 + Math.cos(i + 1) * 0.5)));
+  if (waterData && waterData.length === 12) {
+    usageData = waterData.map((d) => d.water_usage);
+    rainfallData = waterData.map((d) => d.rainfall);
+  } else {
+    const avgUsage = summary?.avg_water_usage || 0;
+    const avgRainfall = summary?.avg_rainfall || 0;
+    usageData = MONTHS.map(() => Math.round(avgUsage));
+    rainfallData = MONTHS.map(() => Math.round(avgRainfall));
+  }
 
   const data = {
     labels: MONTHS,

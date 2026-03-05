@@ -7,3 +7,6 @@ scikit-learn
 joblib
 python-dotenv
 numpy
+passlib[bcrypt]
+python-jose[cryptography]
+bcrypt

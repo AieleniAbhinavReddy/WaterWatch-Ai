@@ -3,6 +3,31 @@ from typing import Optional, List
 from datetime import datetime
 
 
+# -----------  Authentication  -----------
+
+class RegisterRequest(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    email: str = Field(..., min_length=5, max_length=255)
+    password: str = Field(..., min_length=6, max_length=128)
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class UserOut(BaseModel):
+    id: str
+    username: str
+    email: str
+    role: str
+
+
+class AuthResponse(BaseModel):
+    token: str
+    user: UserOut
+
+
 # -----------  Complaints  -----------
 
 ISSUE_TYPES = [
@@ -106,3 +131,49 @@ class HygieneTipOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# -----------  Water Data Monthly  -----------
+
+class WaterDataMonthly(BaseModel):
+    month: str
+    water_usage: float
+    rainfall: float
+
+
+# -----------  Water Conservation AI  -----------
+
+class ConservationInput(BaseModel):
+    area_name: str = Field(..., min_length=1, max_length=100)
+    rainfall: float = Field(..., ge=0)
+    population: int = Field(..., gt=0)
+    water_usage: float = Field(..., ge=0)
+    month: int = Field(..., ge=1, le=12)
+
+
+class ConservationRecommendation(BaseModel):
+    area_name: str
+    water_efficiency_score: float
+    risk_category: str
+    recommendations: List[str]
+    potential_savings_pct: float
+    priority: str
+
+
+# -----------  Water Quality  -----------
+
+class WaterQualityInput(BaseModel):
+    ph: float = Field(..., ge=0, le=14, description="pH level")
+    turbidity: float = Field(..., ge=0, description="Turbidity (NTU)")
+    dissolved_oxygen: float = Field(..., ge=0, description="Dissolved Oxygen (mg/L)")
+    conductivity: float = Field(..., ge=0, description="Conductivity (µS/cm)")
+    temperature: float = Field(..., description="Water Temperature (°C)")
+    total_dissolved_solids: float = Field(..., ge=0, description="TDS (mg/L)")
+
+
+class WaterQualityResult(BaseModel):
+    overall_quality: str
+    quality_score: float
+    parameters: dict
+    risks: List[str]
+    recommendations: List[str]

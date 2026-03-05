@@ -8,7 +8,7 @@ import {
   MapPin,
   RefreshCw,
 } from "lucide-react";
-import { getComplaints, getAnalyticsSummary } from "../services/api";
+import { getComplaints, getAnalyticsSummary, getWaterDataMonthly } from "../services/api";
 import { ComplaintTrendChart, RiskDoughnut, WaterUsageChart } from "../components/Charts";
 import MapView from "../components/MapView";
 import ComplaintList from "../components/ComplaintList";
@@ -61,16 +61,18 @@ function SectionHeader({ icon: Icon, title }) {
 export default function Dashboard() {
   const [complaints, setComplaints] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [waterData, setWaterData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchData = () => {
     setLoading(true);
     setError(null);
-    Promise.all([getComplaints(), getAnalyticsSummary()])
-      .then(([compRes, sumRes]) => {
+    Promise.all([getComplaints(), getAnalyticsSummary(), getWaterDataMonthly()])
+      .then(([compRes, sumRes, waterRes]) => {
         setComplaints(compRes.data);
         setSummary(sumRes.data);
+        setWaterData(waterRes.data);
       })
       .catch((err) => {
         console.error(err);
@@ -162,7 +164,7 @@ export default function Dashboard() {
       {/* Water usage chart */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
         <SectionHeader icon={Droplet} title="Water Usage Insights" />
-        <WaterUsageChart summary={summary} />
+        <WaterUsageChart summary={summary} waterData={waterData} />
       </div>
 
       {/* Map */}

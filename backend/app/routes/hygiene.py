@@ -8,7 +8,7 @@ from app.database import get_db
 from app.models import HygieneContent
 from app.schemas import HygieneTipOut
 
-logger = logging.getLogger("aquavision.hygiene")
+logger = logging.getLogger("waterwatchai.hygiene")
 router = APIRouter(prefix="/hygiene", tags=["Hygiene"])
 
 # Default tips seeded on first request if table is empty

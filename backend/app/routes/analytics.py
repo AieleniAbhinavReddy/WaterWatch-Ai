@@ -7,9 +7,9 @@ from sqlalchemy import func, Integer
 
 from app.database import get_db
 from app.models import Complaint, Prediction, WaterData
-from app.schemas import AnalyticsSummary, AnalyticsDetail, ComplaintsByMonth, TrendData, IssueTypeCount
+from app.schemas import AnalyticsSummary, AnalyticsDetail, ComplaintsByMonth, TrendData, IssueTypeCount, WaterDataMonthly
 
-logger = logging.getLogger("aquavision.analytics")
+logger = logging.getLogger("waterwatchai.analytics")
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
 MONTH_NAMES = [
@@ -145,3 +145,31 @@ def get_trends(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Analytics trends failed: {e}")
         raise HTTPException(status_code=500, detail="Failed to generate trend analytics.")
+
+
+@router.get("/water-data", response_model=list[WaterDataMonthly])
+def get_water_data_monthly(db: Session = Depends(get_db)):
+    """Aggregate water_data by month – returns avg water_usage and avg rainfall per month."""
+    try:
+        rows = (
+            db.query(
+                WaterData.month.label("m"),
+                func.avg(WaterData.water_usage).label("avg_usage"),
+                func.avg(WaterData.rainfall).label("avg_rain"),
+            )
+            .group_by(WaterData.month)
+            .order_by(WaterData.month)
+            .all()
+        )
+        month_map = {r.m: (float(r.avg_usage), float(r.avg_rain)) for r in rows}
+        return [
+            WaterDataMonthly(
+                month=MONTH_NAMES[i],
+                water_usage=round(month_map.get(i, (0, 0))[0], 2),
+                rainfall=round(month_map.get(i, (0, 0))[1], 2),
+            )
+            for i in range(1, 13)
+        ]
+    except Exception as e:
+        logger.error(f"Water data monthly failed: {e}")
+        raise HTTPException(status_code=500, detail="Failed to fetch water data.")

@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from app.schemas import PredictionInput, PredictionResult
 from app.services.ai_model import predict_risk
 
-logger = logging.getLogger("aquavision.prediction")
+logger = logging.getLogger("waterwatchai.prediction")
 router = APIRouter(prefix="/prediction", tags=["Prediction"])
 
 

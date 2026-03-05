@@ -4,7 +4,7 @@ import numpy as np
 import joblib
 from app.schemas import PredictionInput, PredictionResult
 
-logger = logging.getLogger("aquavision.ai_model")
+logger = logging.getLogger("waterwatchai.ai_model")
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "water_model.pkl")
 
