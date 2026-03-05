@@ -1,0 +1,34 @@
+# Environment
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.pkl
+venv/
+.venv/
+
+# SQLite database
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# Node
+frontend/node_modules/
+frontend/build/
+frontend/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store

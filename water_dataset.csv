@@ -1,0 +1,11 @@
+area_name,rainfall,population,water_usage,complaint_count,month,shortage_risk
+AreaA,120,50000,30000,5,1,0
+AreaB,30,80000,60000,45,5,1
+AreaC,60,70000,40000,20,3,0
+AreaD,20,90000,70000,60,6,1
+AreaE,100,40000,20000,4,2,0
+AreaF,10,85000,65000,50,7,1
+AreaG,90,45000,25000,8,4,0
+AreaH,15,95000,72000,70,8,1
+AreaI,80,48000,26000,9,3,0
+AreaJ,25,87000,68000,55,6,1
